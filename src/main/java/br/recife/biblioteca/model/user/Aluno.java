@@ -12,11 +12,11 @@ public class Aluno extends Usuario {
 
     @Override
     public int prazoDiasPadrao() {
-        return 0;
+        return 14;
     }
 
     @Override
     public double fatorMulta() {
-        return 0;
+        return 1.0;
     }
 }

@@ -13,9 +13,10 @@ public class ServidorService {
 
     private ServidorRepository servidorRepository = new ServidorRepositoryImpl();
 
-    public void salvar(UsuarioDTO dto) {
+    public Servidor salvar(UsuarioDTO dto) {
         Servidor servidor = Servidor.novo(IdUtils.gerarId(), dto.nome(), dto.documento());
         this.servidorRepository.salvar(servidor);
+        return servidor;
     }
 
     public Servidor buscarPorId(Long id) {

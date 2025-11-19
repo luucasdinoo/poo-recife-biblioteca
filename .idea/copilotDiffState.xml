@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/src/main/java/br/recife/biblioteca/model/lib/Recurso.java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/main/java/br/recife/biblioteca/model/lib/Recurso.java" />
+              <option name="originalContent" value="package br.recife.biblioteca.model.lib;&#10;&#10;public abstract class Recurso {&#10;&#10;    private Long id;&#10;    private String titulo;&#10;    private String anoPublicacao;&#10;    private Boolean disponivel;&#10;&#10;    protected Recurso(Long id, String titulo, String anoPublicacao, Boolean disponivel) {&#10;        this.id = id;&#10;        this.titulo = titulo;&#10;        this.anoPublicacao = anoPublicacao;&#10;        this.disponivel = disponivel;&#10;    }&#10;&#10;    public abstract void calcularMulta(long diasAtraso);&#10;&#10;    public Long getId() {&#10;        return id;&#10;    }&#10;&#10;    public String getTitulo() {&#10;        return titulo;&#10;    }&#10;&#10;    public String getAnoPublicacao() {&#10;        return anoPublicacao;&#10;    }&#10;&#10;    public Boolean getDisponivel() {&#10;        return disponivel;&#10;    }&#10;&#10;    public void setDisponivel(Boolean disponivel) {&#10;        this.disponivel = disponivel;&#10;    }&#10;&#10;    public String getDescricao(){&#10;        return this.titulo + &quot; - &quot; + this.anoPublicacao;&#10;    }&#10;}&#10;" />
+              <option name="updatedContent" value="package br.recife.biblioteca.model.lib;&#10;&#10;public abstract class Recurso {&#10;&#10;    private Long id;&#10;    private String titulo;&#10;    private String anoPublicacao;&#10;    private Boolean disponivel;&#10;&#10;    protected Recurso(Long id, String titulo, String anoPublicacao, Boolean disponivel) {&#10;        this.id = id;&#10;        this.titulo = titulo;&#10;        this.anoPublicacao = anoPublicacao;&#10;        this.disponivel = disponivel;&#10;    }&#10;&#10;    public abstract void calcularMulta(long diasAtraso);&#10;&#10;    public Long getId() {&#10;        return id;&#10;    }&#10;&#10;    public String getTitulo() {&#10;        return titulo;&#10;    }&#10;&#10;    public String getAnoPublicacao() {&#10;        return anoPublicacao;&#10;    }&#10;&#10;    public Boolean getDisponivel() {&#10;        return disponivel;&#10;    }&#10;&#10;    public void setDisponivel(Boolean disponivel) {&#10;        this.disponivel = disponivel;&#10;    }&#10;&#10;    public String getDescricao(){&#10;        return this.titulo + &quot; - &quot; + this.anoPublicacao;&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

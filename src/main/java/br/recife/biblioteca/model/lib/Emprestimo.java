@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class Emprestimo {
 
+    private Long id;
     private Recurso recurso;
     private Usuario usuario;
     private LocalDateTime dataEmprestimo;
@@ -13,12 +14,14 @@ public class Emprestimo {
     private String status;
 
     private Emprestimo(
+            Long id,
             Recurso recurso,
             Usuario usuario,
             LocalDateTime dataEmprestimo,
             LocalDateTime dataPrevista,
             String status
     ) {
+        this.id = id;
         this.recurso = recurso;
         this.usuario = usuario;
         this.dataEmprestimo = dataEmprestimo;
@@ -27,13 +30,18 @@ public class Emprestimo {
     }
 
     public static Emprestimo novo(
+            Long id,
             Recurso recurso,
             Usuario usuario,
             LocalDateTime dataEmprestimo,
             LocalDateTime dataPrevista,
             String status
     ){
-        return new Emprestimo(recurso, usuario, dataEmprestimo, dataPrevista, status);
+        return new Emprestimo(id, recurso, usuario, dataEmprestimo, dataPrevista, status);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Recurso getRecurso() {

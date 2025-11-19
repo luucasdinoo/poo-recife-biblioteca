@@ -10,12 +10,13 @@ import br.recife.biblioteca.repository.impl.LivroRepositoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LivroService {
 
     private LivroRepository livroRepository = new LivroRepositoryImpl();
 
-    public void salvar(LivroDTO dto) {
+    public Livro salvar(LivroDTO dto) {
         List<Capitulo> capitulos = new ArrayList<>();
         for (int i = 1; i <= dto.capitulos(); i++) {
             Capitulo cap = Capitulo.novo(
@@ -33,6 +34,7 @@ public class LivroService {
                 capitulos
         );
         this.livroRepository.salvar(livro);
+        return livro;
     }
 
     public Livro buscarPorId(Long id) {
@@ -42,6 +44,13 @@ public class LivroService {
 
     public List<Livro> buscarTodos() {
         return this.livroRepository.buscarTodos();
+    }
+
+    public List<Livro> buscarPorTitulo(String titulo) {
+        String lower = titulo == null ? "" : titulo.toLowerCase();
+        return this.livroRepository.buscarTodos().stream()
+                .filter(l -> l.getTitulo() != null && l.getTitulo().toLowerCase().contains(lower))
+                .collect(Collectors.toList());
     }
 
     public void remover(Long id) {

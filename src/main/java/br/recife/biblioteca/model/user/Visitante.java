@@ -12,11 +12,11 @@ public class Visitante extends Usuario {
 
     @Override
     public int prazoDiasPadrao() {
-        return 0;
+        return 5; // visitantes têm prazo padrão mais curto
     }
 
     @Override
     public double fatorMulta() {
-        return 0;
+        return 1.25; // fator de multa um pouco maior
     }
 }

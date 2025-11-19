@@ -7,13 +7,18 @@ import br.recife.biblioteca.model.dto.UsuarioDTO;
 import br.recife.biblioteca.model.lib.Livro;
 import br.recife.biblioteca.model.lib.MidiaDigital;
 import br.recife.biblioteca.model.lib.Revista;
+import br.recife.biblioteca.model.lib.Emprestimo;
 import br.recife.biblioteca.model.user.Aluno;
 import br.recife.biblioteca.model.user.Servidor;
 import br.recife.biblioteca.model.user.Visitante;
 import br.recife.biblioteca.service.*;
+import br.recife.biblioteca.exception.RecursoIndisponivelException;
+import br.recife.biblioteca.exception.EntityNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 public class BibliotecaCLI {
 
     private RevistaService revistaService = new RevistaService();
@@ -22,6 +27,7 @@ public class BibliotecaCLI {
     private AlunoService alunoService = new AlunoService();
     private ServidorService servidorService = new ServidorService();
     private VisitanteService visitanteService = new VisitanteService();
+    private EmprestimoService emprestimoService = new EmprestimoService();
 
     private final Scanner sc = new Scanner(System.in);
 
@@ -30,6 +36,7 @@ public class BibliotecaCLI {
             System.out.println("\n=== RECIFE BIBLIOTECA ===");
             System.out.println("1 - Recursos");
             System.out.println("2 - Usuários");
+            System.out.println("3 - Empréstimos");
             System.out.println("0 - Sair");
             System.out.print("Escolha: ");
 
@@ -38,6 +45,7 @@ public class BibliotecaCLI {
             switch (op) {
                 case 1 -> this.recursos();
                 case 2 -> this.usuarios();
+                case 3 -> this.emprestimos();
                 case 0 -> {
                     System.out.println("Saindo...");
                     sc.close();
@@ -64,8 +72,6 @@ public class BibliotecaCLI {
                 case 2 -> this.visitante();
                 case 3 -> this.servidor();
                 case 9 -> {
-                    this.init();
-                    sc.close();
                     return;
                 }
                 default -> System.out.println("Opção inválida!");
@@ -90,8 +96,7 @@ public class BibliotecaCLI {
             case 3 -> this.buscarServidores();
             case 4 -> this.deletarServidor();
             case 9 -> {
-                this.recursos();
-                sc.close();
+                return;
             }
             default -> System.out.println("Opção inválida!");
         }
@@ -107,7 +112,8 @@ public class BibliotecaCLI {
         String documento = sc.nextLine();
 
         UsuarioDTO dto = new UsuarioDTO(nome, documento);
-        this.servidorService.salvar(dto);
+        Servidor servidor = this.servidorService.salvar(dto);
+        System.out.println("Servidor cadastrado com ID: " + servidor.getId());
     }
 
     private void buscarServidor() {
@@ -118,21 +124,24 @@ public class BibliotecaCLI {
 
         Servidor servidor = this.servidorService.buscarPorId(id);
 
-        System.out.println("=== SERVIDOR ===");
-        System.out.println("ID: " + servidor.getId());
-        System.out.println("Nome: " + servidor.getNome());
-        System.out.println("Documento: " + servidor.getDocumento());
+        String[] headers = {"ID","Nome","Documento"};
+        List<String[]> rows = new ArrayList<>();
+        rows.add(new String[]{String.valueOf(servidor.getId()), servidor.getNome(), servidor.getDocumento()});
+        printTable(headers, rows);
     }
 
     private void buscarServidores() {
         List<Servidor> servidores = this.servidorService.buscarTodos();
-
-        servidores.forEach(s -> {
-            System.out.println("======");
-            System.out.println("ID: " + s.getId());
-            System.out.println("Nome: " + s.getNome());
-            System.out.println("Documento: " + s.getDocumento());
-        });
+        if (servidores.isEmpty()) {
+            System.out.println("Nenhum servidor cadastrado.");
+            return;
+        }
+        String[] headers = {"ID","Nome","Documento"};
+        List<String[]> rows = new ArrayList<>();
+        for (Servidor s : servidores) {
+            rows.add(new String[]{String.valueOf(s.getId()), s.getNome(), s.getDocumento()});
+        }
+        printTable(headers, rows);
     }
 
     private void deletarServidor() {
@@ -162,8 +171,7 @@ public class BibliotecaCLI {
             case 3 -> this.buscarVisitantes();
             case 4 -> this.deletarVisitante();
             case 9 -> {
-                this.recursos();
-                sc.close();
+                return;
             }
             default -> System.out.println("Opção inválida!");
         }
@@ -179,7 +187,8 @@ public class BibliotecaCLI {
         String documento = sc.nextLine();
 
         UsuarioDTO dto = new UsuarioDTO(nome, documento);
-        this.visitanteService.salvar(dto);
+        Visitante visitante = this.visitanteService.salvar(dto);
+        System.out.println("Visitante cadastrado com ID: " + visitante.getId());
     }
 
     private void buscarVisitante() {
@@ -190,21 +199,24 @@ public class BibliotecaCLI {
 
         Visitante visitante = this.visitanteService.buscarPorId(id);
 
-        System.out.println("=== VISITANTE ===");
-        System.out.println("ID: " + visitante.getId());
-        System.out.println("Nome: " + visitante.getNome());
-        System.out.println("Documento: " + visitante.getDocumento());
+        String[] headers = {"ID","Nome","Documento"};
+        List<String[]> rows = new ArrayList<>();
+        rows.add(new String[]{String.valueOf(visitante.getId()), visitante.getNome(), visitante.getDocumento()});
+        printTable(headers, rows);
     }
 
     private void buscarVisitantes() {
         List<Visitante> visitantes = this.visitanteService.buscarTodos();
-
-        visitantes.forEach(v -> {
-            System.out.println("======");
-            System.out.println("ID: " + v.getId());
-            System.out.println("Nome: " + v.getNome());
-            System.out.println("Documento: " + v.getDocumento());
-        });
+        if (visitantes.isEmpty()) {
+            System.out.println("Nenhum visitante cadastrado.");
+            return;
+        }
+        String[] headers = {"ID","Nome","Documento"};
+        List<String[]> rows = new ArrayList<>();
+        for (Visitante v : visitantes) {
+            rows.add(new String[]{String.valueOf(v.getId()), v.getNome(), v.getDocumento()});
+        }
+        printTable(headers, rows);
     }
 
     private void deletarVisitante() {
@@ -234,8 +246,7 @@ public class BibliotecaCLI {
             case 3 -> this.buscarAlunos();
             case 4 -> this.deletarAluno();
             case 9 -> {
-                this.recursos();
-                sc.close();
+                return;
             }
             default -> System.out.println("Opção inválida!");
         }
@@ -253,12 +264,16 @@ public class BibliotecaCLI {
 
     private void buscarAlunos() {
         List<Aluno> alunos = this.alunoService.buscarTodos();
-        alunos.forEach(aluno -> {
-            System.out.println("======");
-            System.out.println("ID: " + aluno.getId());
-            System.out.println("Nome: " + aluno.getNome());
-            System.out.println("Documento: " + aluno.getDocumento());
-        });
+        if (alunos.isEmpty()) {
+            System.out.println("Nenhum aluno cadastrado.");
+            return;
+        }
+        String[] headers = {"ID","Nome","Documento"};
+        List<String[]> rows = new ArrayList<>();
+        for (Aluno a : alunos) {
+            rows.add(new String[]{String.valueOf(a.getId()), a.getNome(), a.getDocumento()});
+        }
+        printTable(headers, rows);
     }
 
     private void buscarAluno() {
@@ -269,10 +284,10 @@ public class BibliotecaCLI {
 
         Aluno al = this.alunoService.buscarPorId(id);
 
-        System.out.println("=== REVISTA ===");
-        System.out.println("ID: " + al.getId());
-        System.out.println("Nome: " + al.getNome());
-        System.out.println("Documento: " + al.getDocumento());
+        String[] headers = {"ID","Nome","Documento"};
+        List<String[]> rows = new ArrayList<>();
+        rows.add(new String[]{String.valueOf(al.getId()), al.getNome(), al.getDocumento()});
+        printTable(headers, rows);
     }
 
     private void cadastrarAluno() {
@@ -285,7 +300,8 @@ public class BibliotecaCLI {
         String documento = sc.nextLine();
 
         UsuarioDTO dto = new UsuarioDTO(nome, documento);
-        this.alunoService.salvar(dto);
+        Aluno aluno = this.alunoService.salvar(dto);
+        System.out.println("Aluno cadastrado com ID: " + aluno.getId());
     }
 
     private void recursos() {
@@ -304,8 +320,6 @@ public class BibliotecaCLI {
                 case 2 -> this.livro();
                 case 3 -> this.midiaDigital();
                 case 9 -> {
-                    this.init();
-                    sc.close();
                     return;
                 }
                 default -> System.out.println("Opção inválida!");
@@ -319,6 +333,7 @@ public class BibliotecaCLI {
         System.out.println("2 - BUSCAR LIVRO");
         System.out.println("3 - BUSCAR TODOS OS LIVROS");
         System.out.println("4 - DELETAR LIVRO");
+        System.out.println("5 - BUSCAR POR TÍTULO");
         System.out.println("9 - Voltar");
         System.out.print("Escolha: ");
 
@@ -329,9 +344,9 @@ public class BibliotecaCLI {
             case 2 -> this.buscarLivro();
             case 3 -> this.buscarLivros();
             case 4 -> this.deletarLivro();
+            case 5 -> this.buscarLivrosPorTitulo();
             case 9 -> {
-                this.recursos();
-                sc.close();
+                return;
             }
             default -> System.out.println("Opção inválida!");
         }
@@ -349,12 +364,32 @@ public class BibliotecaCLI {
 
     private void buscarLivros() {
         List<Livro> livros = this.livroService.buscarTodos();
-        livros.forEach(livro -> {
-            System.out.println("======");
-            System.out.println("ID: " + livro.getId());
-            System.out.println("Título: " + livro.getTitulo());
-            System.out.println("Ano de publicação: " + livro.getAnoPublicacao());
-        });
+        if (livros.isEmpty()) {
+            System.out.println("Nenhum livro cadastrado.");
+            return;
+        }
+        String[] headers = {"ID","Título","Ano","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        for (Livro livro : livros) {
+            rows.add(new String[]{String.valueOf(livro.getId()), livro.getTitulo(), livro.getAnoPublicacao(), (Boolean.TRUE.equals(livro.getDisponivel()) ? "SIM" : "NÃO")});
+        }
+        printTable(headers, rows);
+    }
+
+    private void buscarLivrosPorTitulo() {
+        System.out.print("Título (ou parte dele): ");
+        String titulo = sc.nextLine();
+        List<Livro> livros = this.livroService.buscarPorTitulo(titulo);
+        if (livros.isEmpty()) {
+            System.out.println("Nenhum livro encontrado para o filtro informado.");
+            return;
+        }
+        String[] headers = {"ID","Título","Ano","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        for (Livro livro : livros) {
+            rows.add(new String[]{String.valueOf(livro.getId()), livro.getTitulo(), livro.getAnoPublicacao(), (Boolean.TRUE.equals(livro.getDisponivel()) ? "SIM" : "NÃO")});
+        }
+        printTable(headers, rows);
     }
 
     private void buscarLivro() {
@@ -365,13 +400,12 @@ public class BibliotecaCLI {
 
         Livro livro = this.livroService.buscarPorId(id);
 
-        System.out.println("=== LIVRO ===");
-        System.out.println("ID: " + livro.getId());
-        System.out.println("Título: " + livro.getTitulo());
-        System.out.println("Ano de publicação: " + livro.getAnoPublicacao());
-        System.out.println("Capitulos: ");
-        livro.getCapitulos()
-                .forEach(cap -> System.out.println(cap.getTitulo()));
+        String[] headers = {"ID","Título","Ano","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        rows.add(new String[]{String.valueOf(livro.getId()), livro.getTitulo(), livro.getAnoPublicacao(), (Boolean.TRUE.equals(livro.getDisponivel()) ? "SIM" : "NÃO")});
+        printTable(headers, rows);
+        System.out.println("Capítulos:");
+        livro.getCapitulos().forEach(cap -> System.out.println(" - " + cap.getTitulo()));
     }
 
     private void cadastrarLivro() {
@@ -390,60 +424,32 @@ public class BibliotecaCLI {
         Integer paginas = Integer.parseInt(sc.nextLine());
 
         LivroDTO dto = new LivroDTO(titulo, ano, capitulos, paginas);
-        this.livroService.salvar(dto);
+        Livro livro = this.livroService.salvar(dto);
+        System.out.println("Livro cadastrado com ID: " + livro.getId());
     }
 
     private void midiaDigital() {
-        while (true) {
-            System.out.println("\n=== RECIFE BIBLIOTECA RECURSOS MIDIA DIGITAL ===");
-            System.out.println("1 - CADASTRAR MIDIA DIGITAL");
-            System.out.println("2 - BUSCAR MIDIA DIGITAL");
-            System.out.println("3 - BUSCAR TODAS AS MIDIAS DIGITAL");
-            System.out.println("4 - DELETAR MIDIA DIGITAL");
-            System.out.println("9 - Voltar");
-            System.out.print("Escolha: ");
+        System.out.println("\n=== RECIFE BIBLIOTECA RECURSOS MIDIA DIGITAL ===");
+        System.out.println("1 - CADASTRAR MIDIA DIGITAL");
+        System.out.println("2 - BUSCAR MIDIA DIGITAL");
+        System.out.println("3 - BUSCAR TODAS AS MIDIAS DIGITAL");
+        System.out.println("4 - DELETAR MIDIA DIGITAL");
+        System.out.println("5 - BUSCAR POR TÍTULO");
+        System.out.println("9 - Voltar");
+        System.out.print("Escolha: ");
 
-            int op = Integer.parseInt(sc.nextLine());
+        int op = Integer.parseInt(sc.nextLine());
 
-            switch (op) {
-                case 1 -> this.cadastrarMidiaDigital();
-                case 2 -> this.buscarMidiaDigital();
-                case 3 -> this.buscarMidiasDigitais();
-                case 4 -> this.deletarMidiaDigital();
-                case 9 -> {
-                    this.recursos();
-                    sc.close();
-                    return;
-                }
-                default -> System.out.println("Opção inválida!");
+        switch (op) {
+            case 1 -> this.cadastrarMidiaDigital();
+            case 2 -> this.buscarMidiaDigital();
+            case 3 -> this.buscarMidiasDigitais();
+            case 4 -> this.deletarMidiaDigital();
+            case 5 -> this.buscarMidiasPorTitulo();
+            case 9 -> {
+                return;
             }
-        }
-    }
-
-    private void revista() {
-        while (true) {
-            System.out.println("\n=== RECIFE BIBLIOTECA RECURSOS REVISTA ===");
-            System.out.println("1 - CADASTRAR REVISTA");
-            System.out.println("2 - BUSCAR REVISTA");
-            System.out.println("3 - BUSCAR TODAS AS REVISTAS");
-            System.out.println("4 - DELETAR REVISTA");
-            System.out.println("9 - Voltar");
-            System.out.print("Escolha: ");
-
-            int op = Integer.parseInt(sc.nextLine());
-
-            switch (op) {
-                case 1 -> this.cadastrarRevista();
-                case 2 -> this.buscarRevista();
-                case 3 -> this.buscarRevistas();
-                case 4 -> this.deletarRevista();
-                case 9 -> {
-                    this.recursos();
-                    sc.close();
-                    return;
-                }
-                default -> System.out.println("Opção inválida!");
-            }
+            default -> System.out.println("Opção inválida!");
         }
     }
 
@@ -459,14 +465,32 @@ public class BibliotecaCLI {
 
     private void buscarMidiasDigitais() {
         List<MidiaDigital> revistas = this.midiaDigitalService.buscarTodos();
-        revistas.forEach(revista -> {
-            System.out.println("======");
-            System.out.println("ID: " + revista.getId());
-            System.out.println("Título: " + revista.getTitulo());
-            System.out.println("Ano de publicação: " + revista.getAnoPublicacao());
-            System.out.println("Tamanho (MB): " + revista.getTamanhoMB());
-            System.out.println("Tipo do arquivo: " + revista.getTipoArquivo());
-        });
+        if (revistas.isEmpty()) {
+            System.out.println("Nenhuma mídia cadastrada.");
+            return;
+        }
+        String[] headers = {"ID","Título","Ano","Tamanho(MB)","Tipo","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        for (MidiaDigital m : revistas) {
+            rows.add(new String[]{String.valueOf(m.getId()), m.getTitulo(), m.getAnoPublicacao(), String.valueOf(m.getTamanhoMB()), m.getTipoArquivo(), (Boolean.TRUE.equals(m.getDisponivel()) ? "SIM" : "NÃO")});
+        }
+        printTable(headers, rows);
+    }
+
+    private void buscarMidiasPorTitulo() {
+        System.out.print("Título (ou parte dele): ");
+        String titulo = sc.nextLine();
+        List<MidiaDigital> midias = this.midiaDigitalService.buscarPorTitulo(titulo);
+        if (midias.isEmpty()) {
+            System.out.println("Nenhuma mídia encontrada para o filtro informado.");
+            return;
+        }
+        String[] headers = {"ID","Título","Ano","Tamanho(MB)","Tipo","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        for (MidiaDigital m : midias) {
+            rows.add(new String[]{String.valueOf(m.getId()), m.getTitulo(), m.getAnoPublicacao(), String.valueOf(m.getTamanhoMB()), m.getTipoArquivo(), (Boolean.TRUE.equals(m.getDisponivel()) ? "SIM" : "NÃO")});
+        }
+        printTable(headers, rows);
     }
 
     private void buscarMidiaDigital() {
@@ -477,12 +501,10 @@ public class BibliotecaCLI {
 
         MidiaDigital revista = this.midiaDigitalService.buscarPorId(id);
 
-        System.out.println("=== REVISTA ===");
-        System.out.println("ID: " + revista.getId());
-        System.out.println("Título: " + revista.getTitulo());
-        System.out.println("Ano de publicação: " + revista.getAnoPublicacao());
-        System.out.println("Tamanho (MB): " + revista.getTamanhoMB());
-        System.out.println("Tipo do arquivo: " + revista.getTipoArquivo());
+        String[] headers = {"ID","Título","Ano","Tamanho(MB)","Tipo","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        rows.add(new String[]{String.valueOf(revista.getId()), revista.getTitulo(), revista.getAnoPublicacao(), String.valueOf(revista.getTamanhoMB()), revista.getTipoArquivo(), (Boolean.TRUE.equals(revista.getDisponivel()) ? "SIM" : "NÃO")});
+        printTable(headers, rows);
     }
 
     private void cadastrarMidiaDigital() {
@@ -501,7 +523,8 @@ public class BibliotecaCLI {
         String tipoArquivo = sc.nextLine();
 
         MidiaDigitalDTO dto = new MidiaDigitalDTO(tamanhoMB, tipoArquivo, titulo, ano );
-        this.midiaDigitalService.salvar(dto);
+        MidiaDigital midia = this.midiaDigitalService.salvar(dto);
+        System.out.println("Midia Digital cadastrada com ID: " + midia.getId());
     }
 
     private void deletarRevista() {
@@ -516,13 +539,32 @@ public class BibliotecaCLI {
 
     private void buscarRevistas() {
         List<Revista> revistas = this.revistaService.buscarTodos();
-        revistas.forEach(revista -> {
-            System.out.println("======");
-            System.out.println("ID: " + revista.getId());
-            System.out.println("Título: " + revista.getTitulo());
-            System.out.println("Edição: " + revista.getEdicao());
-            System.out.println("Ano de publicação: " + revista.getAnoPublicacao());
-        });
+        if (revistas.isEmpty()) {
+            System.out.println("Nenhuma revista cadastrada.");
+            return;
+        }
+        String[] headers = {"ID","Título","Edição","Ano","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        for (Revista r : revistas) {
+            rows.add(new String[]{String.valueOf(r.getId()), r.getTitulo(), r.getEdicao(), r.getAnoPublicacao(), (Boolean.TRUE.equals(r.getDisponivel()) ? "SIM" : "NÃO")});
+        }
+        printTable(headers, rows);
+    }
+
+    private void buscarRevistasPorTitulo() {
+        System.out.print("Título (ou parte dele): ");
+        String titulo = sc.nextLine();
+        List<Revista> revistas = this.revistaService.buscarPorTitulo(titulo);
+        if (revistas.isEmpty()) {
+            System.out.println("Nenhuma revista encontrada para o filtro informado.");
+            return;
+        }
+        String[] headers = {"ID","Título","Edição","Ano","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        for (Revista r : revistas) {
+            rows.add(new String[]{String.valueOf(r.getId()), r.getTitulo(), r.getEdicao(), r.getAnoPublicacao(), (Boolean.TRUE.equals(r.getDisponivel()) ? "SIM" : "NÃO")});
+        }
+        printTable(headers, rows);
     }
 
     private void buscarRevista() {
@@ -533,11 +575,10 @@ public class BibliotecaCLI {
 
         Revista revista = this.revistaService.buscarPorId(id);
 
-        System.out.println("=== REVISTA ===");
-        System.out.println("ID: " + revista.getId());
-        System.out.println("Título: " + revista.getTitulo());
-        System.out.println("Edição: " + revista.getEdicao());
-        System.out.println("Ano de publicação: " + revista.getAnoPublicacao());
+        String[] headers = {"ID","Título","Edição","Ano","Disponível"};
+        List<String[]> rows = new ArrayList<>();
+        rows.add(new String[]{String.valueOf(revista.getId()), revista.getTitulo(), revista.getEdicao(), revista.getAnoPublicacao(), (Boolean.TRUE.equals(revista.getDisponivel()) ? "SIM" : "NÃO")});
+        printTable(headers, rows);
     }
 
     private void cadastrarRevista() {
@@ -556,6 +597,191 @@ public class BibliotecaCLI {
         int periodicidade = Integer.parseInt(sc.nextLine());
 
         RevistaDTO dto = new RevistaDTO(edicao, periodicidade, ano, titulo);
-        this.revistaService.salvar(dto);
+        Revista revista = this.revistaService.salvar(dto);
+        System.out.println("Revista cadastrada com ID: " + revista.getId());
+    }
+
+    private void emprestimos() {
+        System.out.println("\n=== RECIFE BIBLIOTECA EMPRÉSTIMOS ===");
+        System.out.println("1 - Emprestar Livro para Aluno");
+        System.out.println("2 - Emprestar MidiaDigital para Visitante");
+        System.out.println("3 - Devolver (informe ID do empréstimo)");
+        System.out.println("4 - Relatório de itens atualmente emprestados");
+        System.out.println("5 - Relatório de itens em atraso");
+        System.out.println("9 - Voltar");
+        System.out.print("Escolha: ");
+
+        int op = Integer.parseInt(sc.nextLine());
+
+        switch (op) {
+            case 1 -> this.emprestarLivroParaAluno();
+            case 2 -> this.emprestarMidiaParaVisitante();
+            case 3 -> this.devolverEmprestimo();
+            case 4 -> this.relatorioEmprestimosAtuais();
+            case 5 -> this.relatorioAtrasados();
+            case 9 -> {
+                return;
+            }
+            default -> System.out.println("Opção inválida!");
+        }
+    }
+
+    private void emprestarLivroParaAluno() {
+        try {
+            System.out.println("\n--- Empréstimo de Livro para Aluno ---");
+            System.out.print("ID do Livro: ");
+            Long livroId = Long.parseLong(sc.nextLine());
+            System.out.print("ID do Aluno: ");
+            Long alunoId = Long.parseLong(sc.nextLine());
+
+            Emprestimo emp = this.emprestimoService.emprestarLivroParaAluno(livroId, alunoId);
+            System.out.println("Empréstimo realizado com sucesso. ID do empréstimo: " + emp.getId());
+        } catch (RecursoIndisponivelException e) {
+            System.out.println("Não foi possível emprestar: " + e.getMessage());
+        } catch (EntityNotFoundException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("ID inválido.");
+        }
+    }
+
+    private void emprestarMidiaParaVisitante() {
+        try {
+            System.out.println("\n--- Empréstimo de MidiaDigital para Visitante ---");
+            System.out.print("ID da MidiaDigital: ");
+            Long midiaId = Long.parseLong(sc.nextLine());
+            System.out.print("ID do Visitante: ");
+            Long visitanteId = Long.parseLong(sc.nextLine());
+
+            Emprestimo emp = this.emprestimoService.emprestarMidiaParaVisitante(midiaId, visitanteId);
+            System.out.println("Empréstimo realizado com sucesso. ID do empréstimo: " + emp.getId());
+        } catch (RecursoIndisponivelException e) {
+            System.out.println("Não foi possível emprestar: " + e.getMessage());
+        } catch (EntityNotFoundException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("ID inválido.");
+        }
+    }
+
+    private void devolverEmprestimo() {
+        try {
+            System.out.println("\n--- Devolução de Empréstimo ---");
+            System.out.print("ID do Empréstimo: ");
+            Long empId = Long.parseLong(sc.nextLine());
+
+            double multa = this.emprestimoService.devolver(empId);
+            System.out.println("Devolução processada. Multa: R$ " + String.format("%.2f", multa));
+        } catch (EntityNotFoundException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("ID inválido.");
+        }
+    }
+
+    private void relatorioEmprestimosAtuais() {
+        List<Emprestimo> lista = this.emprestimoService.relatorioEmprestimosAtuais();
+        if (lista.isEmpty()) {
+            System.out.println("Nenhum empréstimo ativo no momento.");
+            return;
+        }
+        String[] headers = {"ID", "Recurso", "Recurso ID", "Usuário", "Usuário ID", "Data Empréstimo", "Data Prevista"};
+        List<String[]> rows = new ArrayList<>();
+        for (Emprestimo e : lista) {
+            rows.add(new String[]{String.valueOf(e.getId()), e.getRecurso().getDescricao(), String.valueOf(e.getRecurso().getId()), e.getUsuario().getNome(), String.valueOf(e.getUsuario().getId()), String.valueOf(e.getDataEmprestimo()), String.valueOf(e.getDataPrevista())});
+        }
+        printTable(headers, rows);
+    }
+
+    private void relatorioAtrasados() {
+        List<Emprestimo> lista = this.emprestimoService.relatorioAtrasados();
+        if (lista.isEmpty()) {
+            System.out.println("Nenhum empréstimo em atraso no momento.");
+            return;
+        }
+        String[] headers = {"ID", "Recurso", "Recurso ID", "Usuário", "Usuário ID", "Data Empréstimo", "Data Prevista"};
+        List<String[]> rows = new ArrayList<>();
+        for (Emprestimo e : lista) {
+            rows.add(new String[]{String.valueOf(e.getId()), e.getRecurso().getDescricao(), String.valueOf(e.getRecurso().getId()), e.getUsuario().getNome(), String.valueOf(e.getUsuario().getId()), String.valueOf(e.getDataEmprestimo()), String.valueOf(e.getDataPrevista())});
+        }
+        printTable(headers, rows);
+    }
+
+    private void revista() {
+        while (true) {
+            System.out.println("\n=== RECIFE BIBLIOTECA RECURSOS REVISTA ===");
+            System.out.println("1 - CADASTRAR REVISTA");
+            System.out.println("2 - BUSCAR REVISTA");
+            System.out.println("3 - BUSCAR TODAS AS REVISTAS");
+            System.out.println("4 - DELETAR REVISTA");
+            System.out.println("5 - BUSCAR POR TÍTULO");
+            System.out.println("9 - Voltar");
+            System.out.print("Escolha: ");
+
+            int op = Integer.parseInt(sc.nextLine());
+
+            switch (op) {
+                case 1 -> this.cadastrarRevista();
+                case 2 -> this.buscarRevista();
+                case 3 -> this.buscarRevistas();
+                case 4 -> this.deletarRevista();
+                case 5 -> this.buscarRevistasPorTitulo();
+                case 9 -> {
+                    return;
+                }
+                default -> System.out.println("Opção inválida!");
+            }
+        }
+    }
+
+    private void printTable(String[] headers, List<String[]> rows) {
+        int cols = headers.length;
+        int[] widths = new int[cols];
+        for (int i = 0; i < cols; i++) {
+            widths[i] = headers[i].length();
+        }
+        for (String[] r : rows) {
+            for (int i = 0; i < cols; i++) {
+                if (r.length > i && r[i] != null) {
+                    widths[i] = Math.max(widths[i], r[i].length());
+                }
+            }
+        }
+        StringBuilder sep = new StringBuilder();
+        for (int w : widths) {
+            sep.append("+");
+            for (int i = 0; i < w + 2; i++) sep.append("-");
+        }
+        sep.append("+");
+        System.out.println(sep);
+        StringBuilder headerLine = new StringBuilder();
+        for (int i = 0; i < cols; i++) {
+            headerLine.append("| ");
+            headerLine.append(padRight(headers[i], widths[i]));
+            headerLine.append(" ");
+        }
+        headerLine.append("|");
+        System.out.println(headerLine);
+        System.out.println(sep);
+        for (String[] r : rows) {
+            StringBuilder rowLine = new StringBuilder();
+            for (int i = 0; i < cols; i++) {
+                rowLine.append("| ");
+                String cell = (r.length > i && r[i] != null) ? r[i] : "";
+                rowLine.append(padRight(cell, widths[i]));
+                rowLine.append(" ");
+            }
+            rowLine.append("|");
+            System.out.println(rowLine);
+        }
+        System.out.println(sep);
+    }
+
+    private String padRight(String s, int n) {
+        if (s == null) s = "";
+        if (s.length() >= n) return s;
+        StringBuilder sb = new StringBuilder(s);
+        while (sb.length() < n) sb.append(' ');
+        return sb.toString();
     }
 }

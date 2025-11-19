@@ -14,7 +14,7 @@ public abstract class Recurso {
         this.disponivel = disponivel;
     }
 
-    public abstract void calcularMulta(long diasAtraso);
+    public abstract double calcularMulta(long diasAtraso);
 
     public Long getId() {
         return id;
@@ -30,6 +30,10 @@ public abstract class Recurso {
 
     public Boolean getDisponivel() {
         return disponivel;
+    }
+
+    public void setDisponivel(Boolean disponivel) {
+        this.disponivel = disponivel;
     }
 
     public String getDescricao(){

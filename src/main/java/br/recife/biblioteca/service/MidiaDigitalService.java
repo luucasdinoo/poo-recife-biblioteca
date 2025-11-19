@@ -8,15 +8,17 @@ import br.recife.biblioteca.repository.MidiaDigitalRepository;
 import br.recife.biblioteca.repository.impl.MidiaDigitalRepositoryImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MidiaDigitalService {
 
     private MidiaDigitalRepository midiaDigitalRepository = new MidiaDigitalRepositoryImpl();
 
-    public void salvar(MidiaDigitalDTO revista) {
+    public MidiaDigital salvar(MidiaDigitalDTO dto) {
         MidiaDigital midiaDigital = MidiaDigital
-                .novo(IdUtils.gerarId() ,revista.titulo(), revista.anoPublicacao(), Boolean.TRUE, revista.tamanhoMB(), revista.tipoArquivo());
+                .novo(IdUtils.gerarId() ,dto.titulo(), dto.anoPublicacao(), Boolean.TRUE, dto.tamanhoMB(), dto.tipoArquivo());
         this.midiaDigitalRepository.salvar(midiaDigital);
+        return midiaDigital;
     }
 
     public MidiaDigital buscarPorId(Long id) {
@@ -26,6 +28,13 @@ public class MidiaDigitalService {
 
     public List<MidiaDigital> buscarTodos() {
         return this.midiaDigitalRepository.buscarTodos();
+    }
+
+    public List<MidiaDigital> buscarPorTitulo(String titulo) {
+        String lower = titulo == null ? "" : titulo.toLowerCase();
+        return this.midiaDigitalRepository.buscarTodos().stream()
+                .filter(m -> m.getTitulo() != null && m.getTitulo().toLowerCase().contains(lower))
+                .collect(Collectors.toList());
     }
 
     public void remover(Long id) {

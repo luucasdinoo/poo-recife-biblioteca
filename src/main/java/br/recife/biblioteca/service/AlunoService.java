@@ -13,9 +13,10 @@ public class AlunoService {
 
     private AlunoRepository alunoRepository = new AlunoRepositoryImpl();
 
-    public void salvar(UsuarioDTO dto) {
+    public Aluno salvar(UsuarioDTO dto) {
         Aluno aluno = Aluno.novo(IdUtils.gerarId(), dto.nome(), dto.documento());
         this.alunoRepository.salvar(aluno);
+        return aluno;
     }
 
     public Aluno buscarPorId(Long id) {

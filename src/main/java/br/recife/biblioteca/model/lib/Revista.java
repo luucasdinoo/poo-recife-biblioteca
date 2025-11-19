@@ -46,7 +46,8 @@ public class Revista extends Recurso{
     }
 
     @Override
-    public void calcularMulta(long diasAtraso) {
-
+    public double calcularMulta(long diasAtraso) {
+        if (diasAtraso <= 0) return 0.0;
+        return diasAtraso * 0.75; // R$0.75 por dia para revistas
     }
 }

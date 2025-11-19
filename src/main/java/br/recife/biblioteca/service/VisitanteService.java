@@ -13,9 +13,10 @@ public class VisitanteService {
 
     private VisitanteRepository visitanteRepository = new VisitanteRepositoryImpl();
 
-    public void salvar(UsuarioDTO dto) {
+    public Visitante salvar(UsuarioDTO dto) {
         Visitante visitante = Visitante.novo(IdUtils.gerarId(), dto.nome(), dto.documento());
         this.visitanteRepository.salvar(visitante);
+        return visitante;
     }
 
     public Visitante buscarPorId(Long id) {
