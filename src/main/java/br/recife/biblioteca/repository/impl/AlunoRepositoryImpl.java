@@ -7,7 +7,7 @@ import java.util.*;
 
 public class AlunoRepositoryImpl implements AlunoRepository {
 
-    private Map<Long, Aluno> alunos = new HashMap<>();
+    private static final Map<Long, Aluno> alunos = new HashMap<>();
 
     @Override
     public void salvar(Aluno revista) {

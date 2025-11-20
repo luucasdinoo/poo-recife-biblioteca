@@ -38,6 +38,6 @@ public class Livro extends Recurso{
     @Override
     public double calcularMulta(long diasAtraso) {
         if (diasAtraso <= 0) return 0.0;
-        return diasAtraso * 1.0; // base R$1.00 por dia para livros
+        return diasAtraso * 1.0;
     }
 }

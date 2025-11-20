@@ -6,7 +6,7 @@ import java.util.*;
 
 public class RevistaRepositoryImpl implements br.recife.biblioteca.repository.RevistaRepository {
 
-    private Map<Long, Revista> revistas = new HashMap<>();
+    private static final Map<Long, Revista> revistas = new HashMap<>();
 
     @Override
     public void salvar(Revista revista) {

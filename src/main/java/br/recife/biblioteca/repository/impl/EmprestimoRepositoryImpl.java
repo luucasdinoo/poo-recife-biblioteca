@@ -7,26 +7,25 @@ import java.util.*;
 
 public class EmprestimoRepositoryImpl implements EmprestimoRepository {
 
-    private Map<Long, Emprestimo> emprestimos = new HashMap<>();
+    private static final Map<Long, Emprestimo> emprestimos = new HashMap<>();
 
     @Override
     public void salvar(Emprestimo emprestimo) {
-        this.emprestimos.put(emprestimo.getId(), emprestimo);
+        emprestimos.put(emprestimo.getId(), emprestimo);
     }
 
     @Override
     public Optional<Emprestimo> buscarPorId(Long id) {
-        return Optional.ofNullable(this.emprestimos.get(id));
+        return Optional.ofNullable(emprestimos.get(id));
     }
 
     @Override
     public List<Emprestimo> buscarTodos() {
-        return new ArrayList<>(this.emprestimos.values());
+        return new ArrayList<>(emprestimos.values());
     }
 
     @Override
     public void remover(Long id) {
-        this.emprestimos.remove(id);
+        emprestimos.remove(id);
     }
 }
-

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class VisitanteRepositoryImpl implements VisitanteRepository {
 
-    private Map<Long, Visitante> visitantes = new HashMap<>();
+    private static final Map<Long, Visitante> visitantes = new HashMap<>();
 
     @Override
     public void salvar(Visitante revista) {

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class ServidorRepositoryImpl implements ServidorRepository {
 
-    private Map<Long, Servidor> servidores = new HashMap<>();
+    private static final Map<Long, Servidor> servidores = new HashMap<>();
 
     @Override
     public void salvar(Servidor revista) {

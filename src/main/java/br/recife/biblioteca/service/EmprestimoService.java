@@ -75,7 +75,6 @@ public class EmprestimoService {
                 .orElseThrow(() -> new EntityNotFoundException("Empréstimo não encontrado."));
 
         if (!"EMPRESTADO".equals(emp.getStatus())) {
-            // already returned
             return 0.0;
         }
 
@@ -93,10 +92,8 @@ public class EmprestimoService {
         double multaBase = recurso.calcularMulta(diasAtraso);
         double multa = multaBase * usuario.fatorMulta();
 
-        // mark resource available and mark emprestimo as returned
         recurso.setDisponivel(Boolean.TRUE);
         emp.setStatus("DEVOLVIDO");
-        // keep record in repository but update status
         this.emprestimoRepository.salvar(emp);
 
         return multa;

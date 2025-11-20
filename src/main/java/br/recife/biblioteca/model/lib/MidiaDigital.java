@@ -48,6 +48,6 @@ public class MidiaDigital extends Recurso{
     @Override
     public double calcularMulta(long diasAtraso) {
         if (diasAtraso <= 0) return 0.0;
-        return diasAtraso * 0.5; // R$0.50 por dia para mídias digitais
+        return diasAtraso * 0.5;
     }
 }

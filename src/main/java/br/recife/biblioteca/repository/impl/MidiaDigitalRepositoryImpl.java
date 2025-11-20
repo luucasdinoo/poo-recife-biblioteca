@@ -7,7 +7,7 @@ import java.util.*;
 
 public class MidiaDigitalRepositoryImpl implements MidiaDigitalRepository {
 
-    private Map<Long, MidiaDigital> midiasDigitais = new HashMap<>();
+    private static final Map<Long, MidiaDigital> midiasDigitais = new HashMap<>();
 
     @Override
     public void salvar(MidiaDigital midiaDigital) {
